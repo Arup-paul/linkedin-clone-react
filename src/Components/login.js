@@ -18,7 +18,12 @@ const Login = (props) => {
                   <h1>Welcome to your professional community</h1>
                   <img src="/images/login-hero.svg" alt="hero image"/>
               </Hero>
-
+              <Form>
+                  <Google>
+                      <img src="/images/google.svg" alt=""/>
+                      Sign in with Google
+                  </Google>
+              </Form>
           </Section>
 
       </Container>
@@ -123,7 +128,7 @@ const Hero = styled.div`
     height:670px;
     position: absolute;
     bottom: -2px; 
-    right:-50px;
+    right:-150px;
     top:100px;
     @media(max-width: 768px){
       top:100px;
@@ -134,6 +139,38 @@ const Hero = styled.div`
     
     
   }
-`
+`;
+
+const Form = styled.div`
+    margin-top:100px;
+    width:408px;
+  @media(max-width: 768px){
+    margin-top:20px;
+  }
+`;
+
+const Google  = styled.button`
+    display: flex;
+    justify-content: center;
+    background-color: #fff;
+    align-items: center;
+    height: 55px;
+    width: 100%;
+    border-radius: 28px;
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 60%) inset 0 0 0 2px rgb(0 0 0 / 0%)  inset
+     0 0 0 1px rgb(0 0 0 / 0%);
+    vertical-align:middle;
+  z-index:0;
+  transition-duration: 167ms;
+  font-size: 20px;
+  color:rgba(0,0,0,0.5);
+  &:hover{
+    background-color: rgba(207,207,2-7,0.25);
+    color:rgba(0,1,0,0.75);
+  }
+  
+  
+    
+`;
 
 export default Login;
