@@ -2,10 +2,16 @@ import styled from 'styled-components'
 import Leftside from "./Leftside";
 import Main from "./Main";
 import Rightside from "./Rightside";
+import  { Redirect } from 'react-router'
+import  { connect } from "react-redux";
 
-const Home = ()  => {
+const Home = (props)  => {
     return (
          <Container>
+             {
+                 !props.user &&
+                 <Redirect to="/" />
+             }
              <Section>
                  <h5>
                      <a>
@@ -64,7 +70,6 @@ const Section  = styled.div`
   }
   
 `;
-
 const Layout = styled.div`
   display: grid;
   grid-template-areas: "leftside main rightside";
@@ -77,7 +82,12 @@ const Layout = styled.div`
     display: flex;
     flex-direction: column;
     padding:0 5px;
-  }
-  
+  } 
 `;
-export default Home;
+
+const mapStateToProps = (state) => {
+    return {
+        user:state.userState.user,
+    }
+}
+export default connect(mapStateToProps)(Home);
