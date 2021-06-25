@@ -1,12 +1,36 @@
 
 import styled from "styled-components";
 import {useState} from "react";
+import ReactPlayer from "react-player";
+import { connect } from "react-redux";
 
 const PostModal = (props) =>  {
     const  [editorText,setEditorText] = useState('');
+    const  [shareImage,setShareImage] = useState('');
+    const  [videoLink,setVideoLInk] = useState('');
+    const  [assertArea,setAssertArea] = useState('');
+
+    const handleChange = (e) => {
+        const image = e.target.files[0];
+
+        if(image === "" || image === undefined) {
+            alert(`not an image, the file is ${typeof image}`);
+            return;
+        }
+        setShareImage(image)
+    }
+
+    const switchAssertArea = (area) => {
+        setShareImage("");
+        setVideoLInk("");
+        setAssertArea(area);
+    }
 
     const reset = (e) => {
          setEditorText("");
+         setShareImage("");
+         setVideoLInk("");
+         setAssertArea("");
          props.handleClick(e)
     }
 
@@ -23,8 +47,12 @@ const PostModal = (props) =>  {
                         </Header>
                         <SharedContent>
                             <UserInfo>
-                                <img src="/images/user.svg" alt=""/>
-                                <span>Name</span>
+                                {
+                                    props.user.photoURL
+                                    ? <img src={props.user.photoURL} />
+                                    : <img src="/images/user.svg" alt=""/>
+                                }
+                                <span>{props.user.displayName}</span>
                             </UserInfo>
                             <Editor>
                          <textarea
@@ -32,15 +60,48 @@ const PostModal = (props) =>  {
                              onChange={(e) => setEditorText(e.target.value)}
                              placeholder="What do you want to talk about"
                              autoFocus={true}
-                         ></textarea>
+                         />
+                                { assertArea === 'image' ?
+                                    <UploadImage>
+                                        <input
+                                            type="file"
+                                            except="image/gif, image/jpg, image/png, image/jpeg"
+                                            name="image"
+                                            id="file"
+                                            style={{display: 'none'}}
+                                            onChange={handleChange}
+
+                                        />
+                                        <p>
+                                            <label htmlFor="file">
+                                                Select an image to share
+                                            </label>
+                                        </p>
+                                        {shareImage && <img src={URL.createObjectURL(shareImage)}/>}
+                                    </UploadImage>
+                                     :
+                                      assertArea === 'media' &&
+                                        <>
+                                            <input
+                                                type="text"
+                                                placeholder="Please input a video link"
+                                                value={videoLink}
+                                                onChange={(e) => setVideoLInk(e.target.value)}
+                                            />
+                                            {videoLink && (
+                                                <ReactPlayer width="100%" url={videoLink}/>
+                                            )}
+                                        </>
+
+                                }
                             </Editor>
                         </SharedContent>
                         <SharedCreation>
                             <AttachAssets>
-                                <AssetButton>
+                                <AssetButton onClick={() => switchAssertArea("image")}>
                                     <img src="/images/photo-icon.svg" alt=""/>
                                 </AssetButton>
-                                <AssetButton>
+                                <AssetButton onClick={() => switchAssertArea("media")}>
                                     <img src="/images/video-icon.svg" alt=""/>
                                 </AssetButton>
                             </AttachAssets>
@@ -51,7 +112,7 @@ const PostModal = (props) =>  {
                                 </AssetButton>
                             </ShareComment>
 
-                            <PostButton>
+                            <PostButton disabled={!editorText ? true : false}>
                                 post
                             </PostButton>
                         </SharedCreation>
@@ -181,10 +242,10 @@ const PostButton = styled.button`
   border-radius: 20px;
   padding-left: 16px;
   padding-right: 16px;
-  background: #0a66c2;
-  color: white;
+  background: ${(props) => (props.disabled ? 'rgba(0,0,0,0.6)' : '#0a66c2')};
+  color: ${(props) => (props.disabled ? 'rgba(1,1,1,0.2)' : 'white')};
   &:hover{
-    background: #004182;
+    background:${(props) => (props.disabled ? 'rgba(0,0,0,0.8)' : '#004182')};
   }
 `;
 
@@ -204,6 +265,24 @@ const Editor = styled.div`
   }
 `;
 
+const UploadImage = styled.div`
+   text-align: center;
+  img {
+    width: 100%;
+    
+  }
+    
+`;
+
+const mapStateToProps = (state) => {
+   return  {
+       user:state.userState.user,
+   }
+}
+
+const mapDispatchToProps = (dispatch) => {{}}
 
 
-export default PostModal;
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(PostModal);
