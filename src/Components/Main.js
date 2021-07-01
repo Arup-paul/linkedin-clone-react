@@ -1,10 +1,16 @@
 import styled from "styled-components";
 import PostModal from "./PostModal";
-import {useState} from "react";
+import {useState,useEffect} from "react";
+import {connect} from "react-redux";
+import {getArticleAPI} from "../actions";
 
 const Main  = (props) => {
 
     const [showModal,setShowModal] = useState("close");
+
+    useEffect(() => {
+         props.getArticles()
+    },[])
     const handleClick = (e) => {
         e.preventDefault();
 
@@ -28,33 +34,45 @@ const Main  = (props) => {
     return (
         <Container>
            <ShareBox>
-               <div>
-                   <img src="/images/user.svg" alt=""/>
-                   <button onClick={handleClick}>Start a post</button>
-               </div>
-               <div>
+
+                   <div>
+                       {
+                           props.user && props.user.photoURL ?
+                               ( <img src={props.user.photoURL}/> )
+                           :
+                               (<img src="/images/user.svg" alt=""/>)
+                       }
+                       <button onClick={handleClick} disabled={props.loading ? true : false}>Start a post</button>
+                   </div>
+
+                   <div>
                    <button>
-                       <img src="/images/photo-icon.svg" alt=""/>
-                       <span>Photo</span>
-                   </button>
-                   
-                   <button>
-                       <img src="/images/video-icon.svg" alt=""/>
-                       <span>Video</span>
+                   <img src="/images/photo-icon.svg" alt=""/>
+                   <span>Photo</span>
                    </button>
 
                    <button>
-                       <img src="/images/event-icon.svg" alt=""/>
-                       <span>Event</span>
+                   <img src="/images/video-icon.svg" alt=""/>
+                   <span>Video</span>
                    </button>
 
                    <button>
-                       <img className="article" src="/images/article-icon.svg" alt=""/>
-                       <span>Write article</span>
+                   <img src="/images/event-icon.svg" alt=""/>
+                   <span>Event</span>
                    </button>
-               </div>
+
+                   <button>
+                   <img className="article" src="/images/article-icon.svg" alt=""/>
+                   <span>Write article</span>
+                   </button>
+                   </div>
+
            </ShareBox>
-            <div>
+
+            <Content>
+                {
+                    props.loading && <img src="/images/spinner.svg" alt=""/>
+                }
                 <Article>
                     <SharedActor>
                         <a>
@@ -109,7 +127,7 @@ const Main  = (props) => {
                     </button>
                   </SocialAction>
                 </Article>
-            </div>
+            </Content>
             <PostModal showModal={showModal} handleClick={handleClick} />
         </Container>
     );
@@ -129,6 +147,14 @@ const CommonCard = styled.div`
   border: none;
   box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
 
+`;
+
+const Content = styled.div`
+   text-align: center;
+  & > img {
+    width:30px;
+  }
+  
 `;
 
 const ShareBox = styled(CommonCard)`
@@ -313,4 +339,15 @@ const SocialAction = styled.div`
   }
 `;
 
-export default Main;
+const mapSTateToProps = (state) => {
+    return {
+        loading:state.articleState.loading,
+        user:state.userState.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => ({
+   getArticles:() => dispatch(getArticleAPI())
+})
+
+export default connect(mapSTateToProps,mapDispatchToProps)(Main);

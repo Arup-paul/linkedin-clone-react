@@ -72,8 +72,8 @@ const PostModal = (props) =>  {
                             <UserInfo>
                                 {
                                     props.user.photoURL
-                                    ? <img src={props.user.photoURL} />
-                                    : <img src="/images/user.svg" alt=""/>
+                                    ? (<img src={props.user.photoURL} /> )
+                                    : (<img src="/images/user.svg" alt=""/>)
                                 }
                                 <span>{props.user.displayName}</span>
                             </UserInfo>
