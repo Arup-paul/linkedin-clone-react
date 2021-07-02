@@ -3,6 +3,7 @@ import PostModal from "./PostModal";
 import {useState,useEffect} from "react";
 import {connect} from "react-redux";
 import { getArticleAPI } from "../actions";
+import ReactPlayer from "react-player";
 
 const Main  = (props) => {
 
@@ -109,7 +110,14 @@ const Main  = (props) => {
                             </Description>
                             <SharedImg>
                                 <a>
-                                    <img src="/images/shared-img.jpg" alt=""/>
+                                    {
+                                        !article.sharedImg && article.video
+                                            ? <ReactPlayer width={"100%"} url={article.video} />
+                                            :  (
+                                                article.sharedImg && <img src={article.sharedImg} />
+                                            )
+                                    }
+
                                 </a>
                             </SharedImg>
                             <SocialCounts>
@@ -122,7 +130,7 @@ const Main  = (props) => {
                                     </button>
                                 </li>
                                 <li>
-                                    <a>2 comments</a>
+                                    <a>{article.comments} Comments</a>
                                 </li>
                             </SocialCounts>
                             <SocialAction>
